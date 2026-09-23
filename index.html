@@ -1,0 +1,1073 @@
+<title>Leer un flujograma BPMN</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
+
+<style>
+  /* Paleta institucional CONCYTEC — Pantone 3115 C (#00B4CE), 308 C (#00597C), 390 C (#B4BD10) */
+  :root{
+    --paper:#F1F7F9;
+    --surface:#FFFFFF;
+    --surface-2:#E3F0F4;
+    --ink:#0B2A34;
+    --ink-soft:#4C6670;
+    --line:#CCE0E7;
+    --accent:#00597C;
+    --accent-ink:#00597C;
+    --accent-soft:#D9EFF3;
+    --accent-bright:#00B4CE;
+    --on-bright:#06252E;
+    --lime:#5A6600;
+    --c-start:#1F7A46;
+    --c-end:#C23B2E;
+    --c-gate:#A9700F;
+    --on-accent:#FFFFFF;
+    --shadow:0 1px 2px rgba(0,60,80,.06), 0 12px 30px -12px rgba(0,60,80,.22);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#08191F; --surface:#0E252D; --surface-2:#153039;
+      --ink:#E3F1F4; --ink-soft:#93AEB5; --line:#224048;
+      --accent:#40C4DD; --accent-ink:#6FD6E8; --accent-soft:#0D3540;
+      --accent-bright:#00B4CE; --on-bright:#06252E; --lime:#C6D13A;
+      --c-start:#4FB07D; --c-end:#E07C6E; --c-gate:#D2A05A;
+      --on-accent:#052027;
+      --shadow:0 1px 2px rgba(0,0,0,.3), 0 14px 34px -14px rgba(0,0,0,.68);
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#08191F; --surface:#0E252D; --surface-2:#153039;
+    --ink:#E3F1F4; --ink-soft:#93AEB5; --line:#224048;
+    --accent:#40C4DD; --accent-ink:#6FD6E8; --accent-soft:#0D3540;
+    --accent-bright:#00B4CE; --on-bright:#06252E; --lime:#C6D13A;
+    --c-start:#4FB07D; --c-end:#E07C6E; --c-gate:#D2A05A;
+    --on-accent:#052027;
+    --shadow:0 1px 2px rgba(0,0,0,.3), 0 14px 34px -14px rgba(0,0,0,.68);
+  }
+
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family:"Montserrat","Segoe UI",Helvetica,Arial,sans-serif;
+    font-size:16.5px; line-height:1.7; -webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:var(--accent-bright);color:var(--on-bright)}
+
+  .eyebrow{
+    display:inline-block;
+    font-family:"Montserrat",sans-serif;
+    font-size:.68rem; font-weight:600; letter-spacing:.13em;
+    text-transform:uppercase; color:var(--accent-ink);
+    background:var(--accent-soft); padding:.34rem .74rem; border-radius:999px; margin:0 0 1rem;
+  }
+
+  h1,h2,h3{font-family:"Montserrat",sans-serif;font-weight:700;text-wrap:balance;line-height:1.18;letter-spacing:-.01em}
+  h1{font-size:clamp(2rem,1.4rem + 2.9vw,3rem);margin:0 0 1rem}
+  h2{font-size:clamp(1.5rem,1.2rem + 1.3vw,1.95rem);margin:0 0 .25rem}
+  h3{font-size:1.12rem;margin:1.9rem 0 .4rem;font-weight:600}
+  p{margin:.75rem 0}
+  a{color:var(--accent-ink);text-underline-offset:2px;text-decoration-thickness:2px}
+  strong{font-weight:600}
+
+  header.masthead{background:#00597C;color:#fff}
+  .masthead .inner{max-width:1120px;margin:0 auto;padding:3.4rem 1.5rem 2.8rem;position:relative}
+  .masthead .eyebrow{background:rgba(255,255,255,.16);color:#fff}
+  .masthead h1{color:#fff}
+  .lead{font-size:1.16rem;color:rgba(255,255,255,.9);max-width:60ch;margin:1rem 0 1.7rem}
+  .chips{display:flex;flex-wrap:wrap;gap:.5rem}
+  .chip{
+    font-family:"Montserrat",sans-serif;font-size:.72rem;font-weight:500;letter-spacing:.02em;
+    background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.32);border-radius:999px;
+    padding:.34rem .74rem;color:#fff;
+  }
+  .theme-btn{
+    position:absolute;top:1.1rem;right:1.1rem;
+    font-family:"Montserrat",sans-serif;font-size:.66rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
+    background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.42);color:#fff;
+    border-radius:999px;padding:.42rem .85rem;cursor:pointer;
+  }
+  .theme-btn:hover{background:rgba(255,255,255,.26)}
+
+  .layout{max-width:1120px;margin:0 auto;padding:2.8rem 1.5rem 4rem}
+  @media (min-width:1040px){
+    .layout{display:grid;grid-template-columns:210px minmax(0,1fr);gap:3.4rem;align-items:start}
+  }
+
+  nav.toc{display:none}
+  @media (min-width:1040px){
+    nav.toc{display:block;position:sticky;top:1.5rem;font-size:.86rem}
+    nav.toc .eyebrow{margin-bottom:.8rem}
+    nav.toc ol{list-style:none;margin:0;padding:0;counter-reset:toc}
+    nav.toc li{counter-increment:toc;margin:.15rem 0}
+    nav.toc a{display:block;padding:.36rem .6rem;border-radius:8px;color:var(--ink-soft);text-decoration:none}
+    nav.toc a::before{content:counter(toc,decimal-leading-zero) "  ";font-weight:600;font-size:.82em;color:var(--accent-ink)}
+    nav.toc a:hover{color:var(--ink);background:var(--surface-2)}
+    nav.toc a.active{color:var(--on-bright);background:var(--accent-bright);font-weight:600}
+    nav.toc a.active::before{color:color-mix(in srgb,var(--on-bright) 65%,transparent)}
+  }
+
+  main{min-width:0}
+  section{scroll-margin-top:1.5rem;padding:2.5rem 0;border-top:1px solid var(--line)}
+  section:first-of-type{border-top:0;padding-top:0}
+  section > .prose,section > h2,section > .eyebrow,section > .sec-head{max-width:66ch}
+  .prose ul,.prose ol{max-width:66ch;padding-left:1.2rem;margin:.75rem 0}
+  .prose li{margin:.35rem 0}
+  .sec-head{margin-bottom:1rem}
+  .sec-head .eyebrow{margin-bottom:.6rem}
+
+  .note{
+    background:var(--accent-soft);
+    border:1px solid color-mix(in srgb,var(--accent-bright) 45%,transparent);
+    border-radius:12px;padding:1rem 1.2rem;margin:1.4rem 0;max-width:66ch;font-size:.97rem;
+  }
+  .note b{color:var(--accent-ink)}
+  .goals{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:1.3rem 1.5rem;margin:1.5rem 0;max-width:66ch;box-shadow:var(--shadow)}
+  .goals p{margin:0 0 .5rem;font-weight:700}
+  .goals ul{margin:.3rem 0 0;padding-left:1.1rem}
+
+  figure.diagram{margin:1.9rem 0;background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);overflow:hidden}
+  figure.diagram .scroll{overflow-x:auto;padding:1.4rem 1.4rem .5rem}
+  figure.diagram svg{display:block;min-width:520px;max-width:100%;height:auto;margin:0 auto;color:var(--ink)}
+  figure.diagram figcaption{padding:.8rem 1.4rem 1.2rem;font-size:.9rem;color:var(--ink-soft);border-top:1px solid var(--line)}
+  figure.diagram figcaption b{color:var(--ink);font-weight:600}
+  .fig-tag{font-family:"Montserrat",sans-serif;font-size:.66rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--lime);display:block;margin-bottom:.3rem}
+  figure.diagram svg text{font-family:"Helvetica Neue",Arial,"Segoe UI",sans-serif}
+
+  /* ---------- interactive: symbol explorer ---------- */
+  .explorer{display:grid;gap:1.3rem;margin:1.5rem 0;max-width:66ch}
+  @media (min-width:700px){.explorer{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}}
+  .exp-palette{display:grid;grid-template-columns:repeat(auto-fill,minmax(82px,1fr));gap:.5rem;align-content:start}
+  .exp-chip{background:var(--surface);border:1px solid var(--line);border-radius:11px;padding:.6rem .3rem;display:flex;flex-direction:column;align-items:center;gap:.3rem;cursor:pointer;color:var(--ink);font:inherit}
+  .exp-chip svg{width:32px;height:32px;color:var(--ink)}
+  .exp-chip span{font-size:.66rem;line-height:1.15;text-align:center;color:var(--ink-soft)}
+  .exp-chip:hover{border-color:var(--accent-bright)}
+  .exp-chip[aria-pressed="true"]{border-color:var(--accent-bright);background:var(--accent-bright);color:var(--on-bright)}
+  .exp-chip[aria-pressed="true"] svg{color:var(--on-bright)}
+  .exp-chip[aria-pressed="true"] span{color:var(--on-bright)}
+  .exp-detail{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:1.3rem 1.4rem;box-shadow:var(--shadow);align-self:start}
+  .exp-detail .big{width:76px;height:76px;color:var(--accent-bright);margin-bottom:.6rem}
+  .exp-detail .big svg{width:100%;height:100%;display:block}
+  .exp-shape{font-family:"Montserrat",sans-serif;font-size:.64rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--lime)}
+  .exp-detail h4{margin:.2rem 0 .1rem;font-size:1.12rem;font-family:"Montserrat",sans-serif;font-weight:700}
+  .exp-detail p{font-size:.95rem;margin:.55rem 0}
+  .exp-eg{font-size:.9rem;color:var(--ink-soft);border-top:1px solid var(--line);padding-top:.7rem;margin-top:.8rem}
+  .exp-eg b{color:var(--ink)}
+
+  /* ---------- interactive: guided player ---------- */
+  figure.player{border-color:var(--accent-bright);border-width:2px}
+  .player .player-ui{border-top:1px solid var(--line);padding:1.1rem 1.4rem 1.4rem;display:grid;gap:.9rem}
+  .player-progress{display:flex;align-items:center;gap:.7rem;font-size:.7rem;color:var(--ink-soft);font-family:"Montserrat",sans-serif;font-weight:600;text-transform:uppercase;letter-spacing:.05em}
+  .player-progress .track{flex:1;height:6px;background:var(--surface-2);border-radius:99px;overflow:hidden}
+  .player-progress .track span{display:block;height:100%;background:linear-gradient(90deg,var(--accent-bright),var(--lime));width:0}
+  @media (prefers-reduced-motion:no-preference){.player-progress .track span{transition:width .35s ease}}
+  .player-panel{background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:1rem 1.1rem;min-height:122px}
+  .player-panel .kind{font-family:"Montserrat",sans-serif;font-size:.64rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--lime)}
+  .player-panel h4{margin:.2rem 0 .35rem;font-size:1.12rem;font-family:"Montserrat",sans-serif;font-weight:700}
+  .player-panel p{margin:0;font-size:.95rem}
+  .player-choices{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.8rem}
+  .player-choices:empty{display:none}
+  .player-choices button{font:inherit;cursor:pointer;border-radius:10px;border:0;background:var(--accent-bright);color:var(--on-bright);padding:.55rem 1rem;font-size:.88rem;font-weight:600}
+  .player-choices button:hover{box-shadow:0 5px 16px -3px color-mix(in srgb,var(--accent-bright) 55%,transparent)}
+  .player-controls{display:flex;gap:.5rem;flex-wrap:wrap;align-items:center}
+  .player-controls button{font:inherit;cursor:pointer;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:.5rem .9rem;font-size:.86rem;font-weight:500}
+  .player-controls button:hover:not(:disabled){border-color:var(--accent-bright);color:var(--accent-ink)}
+  .player-controls button:disabled{opacity:.36;cursor:not-allowed}
+  .player-controls .reset{margin-left:auto;color:var(--ink-soft)}
+  figure.player:focus-visible{outline:3px solid var(--accent-bright);outline-offset:3px}
+
+  .player svg .edge{stroke:var(--ink-soft);stroke-width:1.8;fill:none;opacity:.22}
+  .player svg .edge.on{opacity:1;stroke:var(--accent-bright);stroke-width:2.3}
+  .player svg .gnode{opacity:.3}
+  .player svg .gnode.done{opacity:.92}
+  .player svg .gnode.cur{opacity:1}
+  .player svg .elabel{fill:var(--ink-soft);font-size:10.5px;opacity:.78}
+  .player svg .ntext{fill:var(--ink);font-size:11.5px;text-anchor:middle}
+  .player svg .cap{fill:var(--ink-soft);font-size:11px;text-anchor:middle}
+  @media (prefers-reduced-motion:no-preference){
+    .player svg .gnode,.player svg .edge{transition:opacity .3s ease,stroke .3s ease}
+    .player svg .gnode.cur{filter:drop-shadow(0 0 5px var(--accent-bright))}
+  }
+
+  /* ---------- interactive: quiz ---------- */
+  .quiz{max-width:66ch;margin:1.5rem 0;display:grid;gap:.8rem}
+  .qcard{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:1.2rem 1.3rem;box-shadow:var(--shadow)}
+  .qcard .qh{font-weight:700;margin:0 0 .8rem;display:flex;gap:.6rem;font-size:1.02rem}
+  .qcard .qh b{font-family:"Montserrat",sans-serif;color:var(--on-bright);background:var(--accent-bright);flex:none;border-radius:7px;padding:.05rem .45rem;font-size:.82rem;height:fit-content}
+  .qopts{display:grid;gap:.45rem}
+  .qopts button{text-align:left;font:inherit;cursor:pointer;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:10px;padding:.6rem .85rem;font-size:.92rem}
+  .qopts button:hover:not(:disabled){border-color:var(--accent-bright);background:var(--accent-soft)}
+  .qopts button:disabled{cursor:default}
+  .qopts button.correct{border-color:var(--c-start);background:color-mix(in srgb,var(--c-start) 18%,var(--surface))}
+  .qopts button.wrong{border-color:var(--c-end);background:color-mix(in srgb,var(--c-end) 16%,var(--surface))}
+  .qopts button .mk{float:right;font-weight:700}
+  .qexpl{margin:.75rem 0 0;font-size:.9rem;color:var(--ink-soft)}
+  .qexpl[hidden]{display:none}
+  .quiz-score{position:sticky;bottom:.6rem;background:var(--accent-bright);color:var(--on-bright);border:0;border-radius:12px;padding:.8rem 1.1rem;font-weight:700;font-family:"Montserrat",sans-serif;display:flex;justify-content:space-between;align-items:center;gap:1rem;box-shadow:var(--shadow)}
+  .quiz-score span{font-size:.9rem;font-weight:600;color:var(--on-bright)}
+  .quiz-score button{font:inherit;font-size:.76rem;font-weight:600;cursor:pointer;border:1.5px solid color-mix(in srgb,var(--on-bright) 55%,transparent);background:color-mix(in srgb,var(--on-bright) 14%,transparent);color:var(--on-bright);border-radius:9px;padding:.4rem .75rem}
+  .quiz-score button:hover{background:color-mix(in srgb,var(--on-bright) 26%,transparent)}
+
+  ol.steps{list-style:none;counter-reset:st;padding:0;margin:1.5rem 0;max-width:66ch}
+  ol.steps li{counter-increment:st;position:relative;padding:.6rem 0 .6rem 3.1rem;border-bottom:1px solid var(--line)}
+  ol.steps li:last-child{border-bottom:0}
+  ol.steps li::before{
+    content:counter(st);position:absolute;left:0;top:.55rem;width:2.1rem;height:2.1rem;border-radius:50%;
+    display:grid;place-items:center;font-family:"Montserrat",sans-serif;font-size:.92rem;font-weight:700;
+    background:var(--accent-bright);color:var(--on-bright);
+  }
+  ol.steps b{font-weight:600}
+
+  .refcard{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:.1rem 1.4rem;margin:1.5rem 0;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:.9rem 1.3rem;box-shadow:var(--shadow)}
+  .refcard .r{display:flex;gap:.7rem;align-items:center;padding:.55rem 0;border-bottom:1px solid var(--line)}
+  .refcard .r svg{width:38px;height:34px;flex:none;color:var(--accent-bright)}
+  .refcard .r span{font-size:.87rem;line-height:1.3}
+
+  footer{border-top:1px solid var(--line);background:var(--surface)}
+  footer .inner{max-width:1120px;margin:0 auto;padding:2.2rem 1.5rem 3rem;font-size:.88rem;color:var(--ink-soft)}
+  footer b{color:var(--ink)}
+
+  @media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+  a:focus-visible,summary:focus-visible,button:focus-visible{outline:3px solid var(--accent-bright);outline-offset:2px;border-radius:6px}
+</style>
+
+<svg width="0" height="0" aria-hidden="true" focusable="false" style="position:absolute">
+  <defs>
+    <marker id="seq" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="currentColor"/>
+    </marker>
+    <marker id="msg" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="9" markerHeight="9" orient="auto-start-reverse">
+      <path d="M1 1L11 6L1 11" fill="none" stroke="currentColor" stroke-width="1.4"/>
+    </marker>
+    <marker id="msgdot" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="7" markerHeight="7">
+      <circle cx="5" cy="5" r="3.3" fill="var(--surface)" stroke="currentColor" stroke-width="1.3"/>
+    </marker>
+  </defs>
+</svg>
+
+<header class="masthead">
+  <div class="inner">
+    <button class="theme-btn" id="themeToggle" type="button" aria-label="Cambiar tema claro u oscuro">Tema</button>
+    <p class="eyebrow">Taller &middot; Guía interactiva &middot; CONCYTEC · PROCIENCIA</p>
+    <h1>Leer un flujograma BPMN</h1>
+    <p class="lead">Para usuarios de negocio de CONCYTEC y PROCIENCIA. El objetivo no es que dibujes procesos, sino que entiendas cualquier diagrama BPMN que te encuentres. Explora los símbolos, recorre dos procesos paso a paso y ponte a prueba al final.</p>
+    <div class="chips">
+      <span class="chip">Para usuarios de negocio</span>
+      <span class="chip">Explorador + 2 recorridos + test</span>
+      <span class="chip">BPMS CONCYTEC · PROCIENCIA</span>
+    </div>
+  </div>
+</header>
+
+<div class="layout">
+  <nav class="toc" aria-label="Contenido">
+    <p class="eyebrow">En esta guía</p>
+    <ol>
+      <li><a href="#contexto">Por qué necesitas leer BPMN</a></li>
+      <li><a href="#proceso">Proceso y flujograma</a></li>
+      <li><a href="#simbolos">Explorador de símbolos</a></li>
+      <li><a href="#cafe">Recorrido 1: preparar un café</a></li>
+      <li><a href="#delivery">Dos participantes: un pedido</a></li>
+      <li><a href="#metodo">Cómo leer, paso a paso</a></li>
+      <li><a href="#concytec">Recorrido 2: una subvención</a></li>
+      <li><a href="#errores">Errores comunes al leer</a></li>
+      <li><a href="#tarjeta">Tarjeta de referencia</a></li>
+      <li><a href="#autoevaluacion">Autoevaluación</a></li>
+    </ol>
+  </nav>
+
+  <main>
+    <section id="contexto">
+      <div class="sec-head">
+        <p class="eyebrow">01 · Contexto</p>
+        <h2>Por qué necesitas leer BPMN</h2>
+      </div>
+      <div class="prose">
+        <p>CONCYTEC y PROCIENCIA están adoptando un <strong>BPMS</strong> (<em>Business Process Management System</em>): un modelo único para modelar, automatizar y monitorear los procesos institucionales de ambas entidades bajo el mismo estándar, con visibilidad de principio a fin.</p>
+        <p>Ese modelo se apoya en una notación estándar para dibujar los procesos: <strong>BPMN</strong>, <em>Business Process Model and Notation</em>. Cuando el levantamiento de procesos avance, verás estos diagramas en talleres de validación, en los instructivos y dentro de la propia plataforma. Saber leerlos deja de ser opcional.</p>
+        <div class="goals">
+          <p>Al terminar esta guía podrás, frente a un diagrama BPMN:</p>
+          <ul>
+            <li>Identificar <strong>quién participa</strong> y qué le toca a cada área.</li>
+            <li>Ubicar <strong>dónde empieza y dónde termina</strong> el proceso.</li>
+            <li>Seguir <strong>en qué orden</strong> ocurren las actividades.</li>
+            <li>Entender <strong>qué se decide</strong> en cada punto de bifurcación.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="proceso">
+      <div class="sec-head">
+        <p class="eyebrow">02 · Fundamento</p>
+        <h2>Proceso y flujograma</h2>
+      </div>
+      <div class="prose">
+        <p>Un <strong>proceso</strong> es una secuencia de actividades que convierte algo que entra —una solicitud, un expediente, una consulta— en un resultado: una subvención otorgada, un investigador registrado, una opinión técnica emitida.</p>
+        <p>Un <strong>flujograma</strong> es el dibujo de ese proceso. BPMN es solo un acuerdo sobre <em>qué significa cada dibujo</em>: el mismo símbolo, el mismo significado, sin importar el área que lo use. Funciona como las señales de tránsito: un triángulo rojo siempre es «ceda el paso», lo lea quien lo lea.</p>
+        <p>Todo diagrama BPMN se arma con muy pocas piezas. Empieza por conocerlas.</p>
+      </div>
+    </section>
+
+    <section id="simbolos">
+      <div class="sec-head">
+        <p class="eyebrow">03 · Vocabulario</p>
+        <h2>Explorador de símbolos</h2>
+      </div>
+      <div class="prose"><p>Toca cada símbolo para ver qué significa, qué forma tiene y un ejemplo. No hay que memorizarlos: basta reconocer la <strong>forma</strong> —círculo, rectángulo, rombo, flecha, carril— para saber qué tipo de cosa estás mirando.</p></div>
+      <div class="explorer" id="explorer">
+        <div class="exp-palette" role="group" aria-label="Símbolos BPMN"></div>
+        <div class="exp-detail" aria-live="polite">
+          <div class="big" data-role="art"></div>
+          <span class="exp-shape" data-role="shape"></span>
+          <h4 data-role="name"></h4>
+          <p data-role="desc"></p>
+          <p class="exp-eg" data-role="eg"></p>
+        </div>
+      </div>
+      <div class="note"><b>Regla que vale oro:</b> la flecha continua (flujo de secuencia) <b>nunca cruza de un pool a otro</b>. Entre participantes solo hay flechas punteadas (mensajes). Si ves una línea continua saltando de participante, es un error de dibujo.</div>
+    </section>
+
+    <section id="cafe">
+      <div class="sec-head">
+        <p class="eyebrow">04 · Recorrido guiado</p>
+        <h2>Preparar un café</h2>
+      </div>
+      <div class="prose"><p>Empecemos con algo cotidiano. Un solo participante (tú), una decisión, dos caminos que se vuelven a unir. Avanza con los botones y <strong>elige tú</strong> la salida del rombo.</p></div>
+
+      <figure class="diagram player" data-diagram="cafe" tabindex="0" role="group" aria-label="Recorrido guiado: preparar un café">
+        <div class="scroll">
+          <svg viewBox="-18 0 856 210" role="img" aria-label="Flujo: inicio 'quiero un café', hervir agua, compuerta '¿hay café molido?'. Si no, comprar café molido. Los dos caminos se reúnen y siguen a preparar café, servir en la taza y fin 'café listo'.">
+            <line class="edge" data-edge="start>hervir" x1="40" y1="96" x2="66" y2="96" marker-end="url(#seq)"/>
+            <line class="edge" data-edge="hervir>gw1" x1="166" y1="96" x2="196" y2="96" marker-end="url(#seq)"/>
+            <line class="edge" data-edge="gw1>merge" x1="244" y1="96" x2="406" y2="96" marker-end="url(#seq)"/>
+            <path class="edge" data-edge="gw1>comprar" d="M220 72V38H272" marker-end="url(#seq)"/>
+            <path class="edge" data-edge="comprar>merge" d="M404 38H432V72" marker-end="url(#seq)"/>
+            <line class="edge" data-edge="merge>preparar" x1="456" y1="96" x2="486" y2="96" marker-end="url(#seq)"/>
+            <line class="edge" data-edge="preparar>servir" x1="602" y1="96" x2="632" y2="96" marker-end="url(#seq)"/>
+            <line class="edge" data-edge="servir>end" x1="742" y1="96" x2="772" y2="96" marker-end="url(#seq)"/>
+            <text class="elabel" x="300" y="88">Sí</text>
+            <text class="elabel" x="224" y="54">No</text>
+            <g class="gnode" data-node="start">
+              <circle cx="26" cy="96" r="14" fill="none" stroke="var(--c-start)" stroke-width="2"/>
+              <text class="cap" x="26" y="134">Quiero un café</text>
+            </g>
+            <g class="gnode" data-node="hervir">
+              <rect x="66" y="74" width="100" height="44" rx="9" fill="var(--surface)" stroke="currentColor" stroke-width="1.6"/>
+              <text class="ntext" x="116" y="100">Hervir agua</text>
+            </g>
+            <g class="gnode" data-node="gw1">
+              <path d="M220 72L244 96L220 120L196 96Z" fill="var(--surface)" stroke="currentColor" stroke-width="1.6"/>
+              <path d="M212 88L228 104M228 88L212 104" stroke="var(--c-gate)" stroke-width="1.8"/>
+              <text class="cap" x="220" y="139">¿Hay café molido?</text>
+            </g>
+            <g class="gnode" data-node="comprar">
+              <rect x="272" y="18" width="132" height="40" rx="9" fill="var(--surface)" stroke="currentColor" stroke-width="1.6"/>
+              <text class="ntext" x="338" y="42" style="font-size:10.5px">Comprar café molido</text>
+            </g>
+            <g class="gnode" data-node="merge">
+              <path d="M432 72L456 96L432 120L408 96Z" fill="var(--surface)" stroke="currentColor" stroke-width="1.6"/>
+              <path d="M424 88L440 104M440 88L424 104" stroke="var(--c-gate)" stroke-width="1.8"/>
+            </g>
+            <g class="gnode" data-node="preparar">
+              <rect x="486" y="74" width="116" height="44" rx="9" fill="var(--surface)" stroke="currentColor" stroke-width="1.6"/>
+              <text class="ntext" x="544" y="100">Preparar café</text>
+            </g>
+            <g class="gnode" data-node="servir">
+              <rect x="632" y="74" width="110" height="44" rx="9" fill="var(--surface)" stroke="currentColor" stroke-width="1.6"/>
+              <text class="ntext" x="687" y="100">Servir en la taza</text>
+            </g>
+            <g class="gnode" data-node="end">
+              <circle cx="788" cy="96" r="14" fill="none" stroke="var(--c-end)" stroke-width="4"/>
+              <text class="cap" x="788" y="134">Café listo</text>
+            </g>
+          </svg>
+        </div>
+        <div class="player-ui">
+          <div class="player-progress"><div class="track"><span data-role="fill"></span></div><span data-role="ptext"></span></div>
+          <div class="player-panel">
+            <span class="kind" data-role="kind"></span>
+            <h4 data-role="title"></h4>
+            <p data-role="body"></p>
+            <div class="player-choices" data-role="choices"></div>
+          </div>
+          <div class="player-controls">
+            <button type="button" data-role="prev">&larr; Anterior</button>
+            <button type="button" data-role="next">Siguiente &rarr;</button>
+            <button type="button" class="reset" data-role="reset">Reiniciar</button>
+          </div>
+        </div>
+        <figcaption><span class="fig-tag">Recorrido · Preparar un café</span> El círculo de la izquierda (línea fina) abre el proceso; el de la derecha (línea gruesa) lo cierra. En el rombo se toma <b>una</b> salida; tengas que comprar café o no, los caminos se reúnen y desde ahí el proceso es el mismo: preparar y servir.</figcaption>
+      </figure>
+    </section>
+
+    <section id="delivery">
+      <div class="sec-head">
+        <p class="eyebrow">05 · Dos participantes</p>
+        <h2>Pedir comida a domicilio</h2>
+      </div>
+      <div class="prose"><p>Ahora hay <strong>dos participantes</strong>. Cada uno tiene su propio pool y su propio hilo de actividades. Lo que los conecta son las flechas <em>punteadas</em>: los mensajes.</p></div>
+
+      <figure class="diagram">
+        <div class="scroll">
+          <svg viewBox="-14 0 708 320" role="img" aria-label="Dos participantes. Cliente: inicio, elegir y pagar el pedido, recibir el aviso 'en camino', recibir el pedido, fin. Servicio de reparto: recibe el mensaje del pedido, prepara el pedido, lleva el pedido al cliente, fin. Mensajes punteados conectan ambos.">
+            <rect x="1" y="1" width="678" height="104" fill="none" stroke="currentColor" stroke-width="1.4"/>
+            <rect x="1" y="1" width="24" height="104" fill="var(--surface-2)"/>
+            <text x="13" y="53" text-anchor="middle" font-size="11" font-weight="600" fill="var(--ink)" transform="rotate(-90 13 53)">Cliente</text>
+            <rect x="1" y="182" width="678" height="120" fill="none" stroke="currentColor" stroke-width="1.4"/>
+            <rect x="1" y="182" width="24" height="120" fill="var(--surface-2)"/>
+            <text x="13" y="242" text-anchor="middle" font-size="11" font-weight="600" fill="var(--ink)" transform="rotate(-90 13 242)">Servicio de reparto</text>
+
+            <line x1="66" y1="56" x2="92" y2="56" stroke="currentColor" stroke-width="1.8" marker-end="url(#seq)"/>
+            <line x1="243" y1="56" x2="302" y2="56" stroke="currentColor" stroke-width="1.8" marker-end="url(#seq)"/>
+            <line x1="330" y1="56" x2="360" y2="56" stroke="currentColor" stroke-width="1.8" marker-end="url(#seq)"/>
+            <line x1="500" y1="56" x2="556" y2="56" stroke="currentColor" stroke-width="1.8" marker-end="url(#seq)"/>
+            <circle cx="53" cy="56" r="13" fill="none" stroke="var(--c-start)" stroke-width="2"/>
+            <rect x="92" y="36" width="151" height="40" rx="9" fill="var(--surface)" stroke="currentColor" stroke-width="1.6"/>
+            <text x="167" y="60" text-anchor="middle" font-size="11" fill="var(--ink)">Elegir y pagar el pedido</text>
+            <circle cx="316" cy="56" r="13" fill="none" stroke="currentColor" stroke-width="1.8"/>
+            <circle cx="316" cy="56" r="9.5" fill="none" stroke="currentColor" stroke-width="1.8"/>
+            <text x="316" y="90" text-anchor="middle" font-size="10" fill="var(--ink-soft)">aviso recibido</text>
+            <rect x="360" y="36" width="140" height="40" rx="9" fill="var(--surface)" stroke="currentColor" stroke-width="1.6"/>
+            <text x="430" y="60" text-anchor="middle" font-size="11" fill="var(--ink)">Recibir el pedido</text>
+            <circle cx="572" cy="56" r="13" fill="none" stroke="var(--c-end)" stroke-width="4"/>
+
+            <line x1="85" y1="240" x2="112" y2="240" stroke="currentColor" stroke-width="1.8" marker-end="url(#seq)"/>
+            <line x1="252" y1="240" x2="286" y2="240" stroke="currentColor" stroke-width="1.8" marker-end="url(#seq)"/>
+            <line x1="458" y1="240" x2="500" y2="240" stroke="currentColor" stroke-width="1.8" marker-end="url(#seq)"/>
+            <circle cx="72" cy="240" r="13" fill="none" stroke="currentColor" stroke-width="1.8"/>
+            <rect x="64" y="234.5" width="16" height="11" fill="none" stroke="currentColor" stroke-width="1.3"/>
+            <path d="M64 234.5L72 240.5L80 234.5" fill="none" stroke="currentColor" stroke-width="1.3"/>
+            <rect x="112" y="220" width="140" height="40" rx="9" fill="var(--surface)" stroke="currentColor" stroke-width="1.6"/>
+            <text x="182" y="244" text-anchor="middle" font-size="11" fill="var(--ink)">Preparar el pedido</text>
+            <rect x="286" y="220" width="172" height="40" rx="9" fill="var(--surface)" stroke="currentColor" stroke-width="1.6"/>
+            <text x="372" y="244" text-anchor="middle" font-size="11" fill="var(--ink)">Llevar el pedido al cliente</text>
+            <circle cx="516" cy="240" r="13" fill="none" stroke="var(--c-end)" stroke-width="4"/>
+
+            <path d="M150 76V150H72V225" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="5 3" marker-start="url(#msgdot)" marker-end="url(#msg)"/>
+            <text x="158" y="120" font-size="10" fill="var(--ink-soft)">pedido</text>
+            <path d="M182 220V120H316V72" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="5 3" marker-start="url(#msgdot)" marker-end="url(#msg)"/>
+            <text x="214" y="112" font-size="10" fill="var(--ink-soft)">aviso: en camino</text>
+            <path d="M372 220V162H430V78" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="5 3" marker-start="url(#msgdot)" marker-end="url(#msg)"/>
+            <text x="384" y="152" font-size="10" fill="var(--ink-soft)">entrega</text>
+          </svg>
+        </div>
+        <figcaption><span class="fig-tag">Diagrama · Pedido a domicilio</span> Cada pool se lee por separado, de izquierda a derecha. El pool del servicio <b>no arranca solo</b>: su primer círculo es un evento de mensaje, se activa cuando llega el «pedido». Las tres líneas punteadas son la única conversación entre los dos participantes.</figcaption>
+      </figure>
+    </section>
+
+    <section id="metodo">
+      <div class="sec-head">
+        <p class="eyebrow">06 · Método</p>
+        <h2>Cómo leer un diagrama, paso a paso</h2>
+      </div>
+      <div class="prose"><p>Cuando te pongan un diagrama delante, sigue este orden. Funciona con cualquier proceso, por grande que sea; practícalo con los recorridos interactivos de este taller.</p></div>
+      <ol class="steps">
+        <li><b>Mira los carriles.</b> ¿Cuántos pools hay? ¿Qué áreas o roles aparecen como lanes? Ya sabes quién participa.</li>
+        <li><b>Encuentra el inicio.</b> Busca el círculo de línea fina. Lee qué lo dispara: ese es el «gatillo» del proceso.</li>
+        <li><b>Sigue las flechas continuas.</b> De izquierda a derecha, actividad por actividad, dentro del carril en que estés.</li>
+        <li><b>En cada rombo, lee la pregunta.</b> Y lee la condición escrita sobre <em>cada</em> salida. Sin eso, la bifurcación no significa nada.</li>
+        <li><b>Cruza con las líneas punteadas.</b> Cada mensaje te dice qué se envía a otro participante y en qué momento.</li>
+        <li><b>Llega a un fin.</b> Círculo de línea gruesa. Anota el resultado. Si hay varios finales, entiende qué lleva a cada uno.</li>
+        <li><b>Vuelve a los detalles.</b> Revisa objetos de datos y anotaciones para el contexto que el flujo por sí solo no cuenta.</li>
+      </ol>
+    </section>
+
+    <section id="concytec">
+      <div class="sec-head">
+        <p class="eyebrow">07 · Recorrido guiado</p>
+        <h2>Evaluación de una solicitud de subvención</h2>
+      </div>
+      <div class="prose">
+        <p>Un proceso administrativo real —simplificado para el taller— dentro del macroproceso <em>Gestión del Fomento y Financiamiento de Proyectos</em>, que PROCIENCIA ejecuta en representación de CONCYTEC. Aquí conviven <strong>dos pools, dos carriles, flujos de mensaje, una compuerta y dos finales distintos</strong>. Recórrelo y decide en la compuerta.</p>
+      </div>
+
+      <figure class="diagram player" data-diagram="subv" tabindex="0" role="group" aria-label="Recorrido guiado: evaluación de una solicitud de subvención">
+        <div class="scroll">
+          <svg viewBox="-16 0 952 400" role="img" aria-label="Dos participantes. Postulante presenta la propuesta y al final conoce el resultado. PROCIENCIA, con carriles Mesa de Partes y Evaluación y selección, recibe la propuesta, la registra y decide su admisibilidad. Si no es admisible se comunica la observación y termina en 'expediente no admitido'; si es admisible se evalúa, se aprueba la lista de seleccionados y termina en 'subvención otorgada'.">
+            <g class="frame">
+              <rect x="1" y="1" width="918" height="92" fill="none" stroke="currentColor" stroke-width="1.4"/>
+              <rect x="1" y="1" width="24" height="92" fill="var(--surface-2)"/>
+              <text x="13" y="47" text-anchor="middle" font-size="11" font-weight="600" fill="var(--ink)" transform="rotate(-90 13 47)">Postulante</text>
+              <rect x="1" y="140" width="918" height="252" fill="none" stroke="currentColor" stroke-width="1.4"/>
+              <rect x="1" y="140" width="24" height="252" fill="var(--surface-2)"/>
+              <text x="13" y="266" text-anchor="middle" font-size="11" font-weight="600" fill="var(--ink)" transform="rotate(-90 13 266)">PROCIENCIA</text>
+              <line x1="25" y1="245" x2="919" y2="245" stroke="currentColor" stroke-width="1"/>
+              <rect x="25" y="140" width="20" height="105" fill="var(--surface-2)"/>
+              <rect x="25" y="245" width="20" height="147" fill="var(--surface-2)"/>
+              <text x="35" y="192" text-anchor="middle" font-size="9.5" fill="var(--ink-soft)" transform="rotate(-90 35 192)">Mesa de Partes</text>
+              <text x="35" y="318" text-anchor="middle" font-size="9.5" fill="var(--ink-soft)" transform="rotate(-90 35 318)">Evaluación y selección</text>
+            </g>
+
+            <line class="edge" data-edge="start>present" x1="85" y1="47" x2="112" y2="47" marker-end="url(#seq)"/>
+            <line class="edge" data-edge="mpstart>reg" x1="91" y1="196" x2="118" y2="196" marker-end="url(#seq)"/>
+            <path class="edge" data-edge="reg>gw" d="M302 196H326V292" marker-end="url(#seq)"/>
+            <line class="edge" data-edge="gw>evaluar" x1="352" y1="316" x2="392" y2="316" marker-end="url(#seq)"/>
+            <path class="edge" data-edge="gw>obs" d="M300 316H236" marker-end="url(#seq)"/>
+            <line class="edge" data-edge="evaluar>aprobar" x1="542" y1="316" x2="582" y2="316" marker-end="url(#seq)"/>
+            <line class="edge" data-edge="result>fin" x1="790" y1="47" x2="826" y2="47" marker-end="url(#seq)"/>
+            <path class="edge" data-edge="obs>finno" d="M166 336V352H132" marker-end="url(#seq)"/>
+            <text class="elabel" x="360" y="308">Sí</text>
+            <text class="elabel" x="268" y="310">No</text>
+
+            <g class="gnode" data-node="pa_start">
+              <circle cx="72" cy="47" r="13" fill="none" stroke="var(--c-start)" stroke-width="2"/>
+              <text class="cap" x="72" y="76">convocatoria</text>
+            </g>
+            <g class="gnode" data-node="pa_present">
+              <rect x="112" y="28" width="150" height="38" rx="9" fill="var(--surface)" stroke="currentColor" stroke-width="1.6"/>
+              <text class="ntext" x="187" y="51" style="font-size:10.5px">Presentar la propuesta</text>
+            </g>
+            <g class="gnode" data-node="msg1">
+              <path d="M187 66V112H78V183" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="5 3" marker-start="url(#msgdot)" marker-end="url(#msg)"/>
+              <text class="elabel" x="193" y="104">propuesta presentada</text>
+            </g>
+            <g class="gnode" data-node="mp_start">
+              <circle cx="78" cy="196" r="13" fill="none" stroke="currentColor" stroke-width="1.8"/>
+              <rect x="70.5" y="189" width="15" height="11" fill="none" stroke="currentColor" stroke-width="1.3"/>
+              <path d="M71 189L78 195L85 189" fill="none" stroke="currentColor" stroke-width="1.3"/>
+            </g>
+            <g class="gnode" data-node="mp_reg">
+              <rect x="118" y="176" width="184" height="40" rx="9" fill="var(--surface)" stroke="currentColor" stroke-width="1.6"/>
+              <text class="ntext" x="210" y="200" style="font-size:10.5px">Registrar y revisar el expediente</text>
+            </g>
+            <g class="gnode" data-node="gw">
+              <path d="M326 292L352 316L326 340L300 316Z" fill="var(--surface)" stroke="currentColor" stroke-width="1.6"/>
+              <path d="M318 308L334 324M334 308L318 324" stroke="var(--c-gate)" stroke-width="1.8"/>
+              <text class="cap" x="326" y="358">¿Expediente admisible?</text>
+            </g>
+            <g class="gnode" data-node="obs">
+              <rect x="96" y="296" width="140" height="40" rx="9" fill="var(--surface)" stroke="currentColor" stroke-width="1.6"/>
+              <text class="ntext" x="166" y="320" style="font-size:10.5px">Comunicar la observación</text>
+            </g>
+            <g class="gnode" data-node="fin_no">
+              <circle cx="118" cy="352" r="12" fill="none" stroke="var(--c-end)" stroke-width="4"/>
+              <text class="cap" x="118" y="378">no admitido</text>
+            </g>
+            <g class="gnode" data-node="evaluar">
+              <rect x="392" y="296" width="150" height="40" rx="9" fill="var(--surface)" stroke="currentColor" stroke-width="1.6"/>
+              <text class="ntext" x="467" y="320" style="font-size:10.5px">Evaluar la propuesta</text>
+            </g>
+            <g class="gnode" data-node="aprobar">
+              <rect x="582" y="296" width="190" height="40" rx="9" fill="var(--surface)" stroke="currentColor" stroke-width="1.6"/>
+              <text class="ntext" x="677" y="320" style="font-size:10.5px">Aprobar la lista de seleccionados</text>
+            </g>
+            <g class="gnode" data-node="msg2">
+              <path d="M690 296V110H715V67" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="5 3" marker-start="url(#msgdot)" marker-end="url(#msg)"/>
+              <text class="elabel" x="697" y="104">notificación del resultado</text>
+            </g>
+            <g class="gnode" data-node="pa_result">
+              <rect x="640" y="28" width="150" height="38" rx="9" fill="var(--surface)" stroke="currentColor" stroke-width="1.6"/>
+              <text class="ntext" x="715" y="51" style="font-size:10.5px">Conocer el resultado</text>
+            </g>
+            <g class="gnode" data-node="fin_ok">
+              <circle cx="842" cy="47" r="13" fill="none" stroke="var(--c-end)" stroke-width="4"/>
+              <text class="cap" x="842" y="76">subvención otorgada</text>
+            </g>
+          </svg>
+        </div>
+        <div class="player-ui">
+          <div class="player-progress"><div class="track"><span data-role="fill"></span></div><span data-role="ptext"></span></div>
+          <div class="player-panel">
+            <span class="kind" data-role="kind"></span>
+            <h4 data-role="title"></h4>
+            <p data-role="body"></p>
+            <div class="player-choices" data-role="choices"></div>
+          </div>
+          <div class="player-controls">
+            <button type="button" data-role="prev">&larr; Anterior</button>
+            <button type="button" data-role="next">Siguiente &rarr;</button>
+            <button type="button" class="reset" data-role="reset">Reiniciar</button>
+          </div>
+        </div>
+        <figcaption><span class="fig-tag">Recorrido · Solicitud de subvención (versión de taller)</span> El postulante <b>presenta</b> y luego solo <b>espera</b>: su carril está vacío en el medio a propósito. La línea continua de PROCIENCIA <b>nunca salta</b> al pool del postulante. Y hay <b>dos círculos gruesos</b>: dos finales que no significan lo mismo.</figcaption>
+      </figure>
+    </section>
+
+    <section id="errores">
+      <div class="sec-head">
+        <p class="eyebrow">08 · Precauciones</p>
+        <h2>Errores comunes al leer</h2>
+      </div>
+      <ul class="prose">
+        <li><strong>Creer que arriba manda.</strong> El orden de los carriles no indica jerarquía, solo quién ejecuta cada actividad.</li>
+        <li><strong>Saltarse la condición del rombo.</strong> Una compuerta sin leer sus salidas es un dibujo vacío. Siempre hay una pregunta y una respuesta por camino.</li>
+        <li><strong>Confundir línea continua con punteada.</strong> Continua = orden dentro de un participante. Punteada = comunicación entre participantes.</li>
+        <li><strong>Suponer que el primer fin es el único.</strong> Rastrea todos los círculos gruesos; suelen representar desenlaces muy distintos (aprobado, observado, desistido).</li>
+        <li><strong>Ignorar los eventos intermedios de espera.</strong> Ese reloj o ese sobre en mitad del flujo suele ser donde el proceso se detiene días. Ahí están los cuellos de botella.</li>
+      </ul>
+    </section>
+
+    <section id="tarjeta">
+      <div class="sec-head">
+        <p class="eyebrow">09 · Referencia</p>
+        <h2>Tarjeta de referencia rápida</h2>
+      </div>
+      <div class="prose"><p>Un recordatorio compacto para tener a mano durante los talleres de validación.</p></div>
+      <div class="refcard" id="refcard"></div>
+    </section>
+
+    <section id="autoevaluacion">
+      <div class="sec-head">
+        <p class="eyebrow">10 · Autoevaluación</p>
+        <h2>Ponte a prueba</h2>
+      </div>
+      <div class="prose"><p>Lee este diagrama del proceso de registro en RENACYT (versión de taller) y responde. Cada respuesta te da retroalimentación al instante.</p></div>
+
+      <figure class="diagram">
+        <div class="scroll">
+          <svg viewBox="-22 0 764 176" role="img" aria-label="Un participante. Inicio 'solicitud enviada', verificar los documentos, compuerta '¿cumple los requisitos de la categoría?'. Si sí, registrar en RENACYT y fin 'investigador registrado'. Si no, fin 'solicitud rechazada'.">
+            <circle cx="28" cy="70" r="13" fill="none" stroke="var(--c-start)" stroke-width="2"/>
+            <text x="28" y="100" text-anchor="middle" font-size="10" fill="var(--ink-soft)">solicitud enviada</text>
+            <line x1="41" y1="70" x2="72" y2="70" stroke="currentColor" stroke-width="1.8" marker-end="url(#seq)"/>
+            <rect x="72" y="48" width="150" height="44" rx="9" fill="var(--surface)" stroke="currentColor" stroke-width="1.6"/>
+            <text x="147" y="74" text-anchor="middle" font-size="11" fill="var(--ink)">Verificar los documentos</text>
+            <line x1="222" y1="70" x2="252" y2="70" stroke="currentColor" stroke-width="1.8" marker-end="url(#seq)"/>
+            <path d="M280 44L306 70L280 96L254 70Z" fill="var(--surface)" stroke="currentColor" stroke-width="1.6"/>
+            <path d="M272 62L288 78M288 62L272 78" stroke="var(--c-gate)" stroke-width="1.8"/>
+            <text x="280" y="32" text-anchor="middle" font-size="10" fill="var(--ink-soft)">¿Cumple los requisitos de la categoría?</text>
+            <text x="322" y="62" font-size="10" fill="var(--ink-soft)">Sí</text>
+            <text x="256" y="118" font-size="10" fill="var(--ink-soft)">No</text>
+            <line x1="306" y1="70" x2="346" y2="70" stroke="currentColor" stroke-width="1.8" marker-end="url(#seq)"/>
+            <rect x="346" y="48" width="150" height="44" rx="9" fill="var(--surface)" stroke="currentColor" stroke-width="1.6"/>
+            <text x="421" y="74" text-anchor="middle" font-size="11" fill="var(--ink)">Registrar en RENACYT</text>
+            <line x1="496" y1="70" x2="536" y2="70" stroke="currentColor" stroke-width="1.8" marker-end="url(#seq)"/>
+            <circle cx="552" cy="70" r="13" fill="none" stroke="var(--c-end)" stroke-width="4"/>
+            <text x="552" y="100" text-anchor="middle" font-size="10" fill="var(--ink-soft)">investigador registrado</text>
+            <path d="M280 96V132H360" fill="none" stroke="currentColor" stroke-width="1.8" marker-end="url(#seq)"/>
+            <circle cx="376" cy="132" r="13" fill="none" stroke="var(--c-end)" stroke-width="4"/>
+            <text x="376" y="160" text-anchor="middle" font-size="10" fill="var(--ink-soft)">solicitud rechazada</text>
+          </svg>
+        </div>
+        <figcaption><span class="fig-tag">Diagrama · Registro en RENACYT (versión de taller)</span></figcaption>
+      </figure>
+
+      <div class="quiz" id="quiz"></div>
+    </section>
+  </main>
+</div>
+
+<footer>
+  <div class="inner">
+    <p><b>Material de taller.</b> Elaborado a partir de la propuesta de alcance del BPMS para CONCYTEC y PROCIENCIA (agosto de 2026). Los diagramas de subvención y RENACYT son <b>versiones simplificadas</b> con fines didácticos: no reemplazan los procedimientos oficiales ni los flujos que resulten del levantamiento formal.</p>
+    <p>BPMN — <em>Business Process Model and Notation</em>, estándar del Object Management Group (OMG).</p>
+  </div>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+  var root=document.documentElement;
+
+  /* ---------- theme ---------- */
+  (function(){
+    var btn=document.getElementById("themeToggle"), key="bpmn-theme";
+    try{var s=localStorage.getItem(key); if(s) root.setAttribute("data-theme",s);}catch(e){}
+    function current(){
+      var a=root.getAttribute("data-theme");
+      if(a) return a;
+      return (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches)?"dark":"light";
+    }
+    if(btn) btn.addEventListener("click",function(){
+      var next=current()==="dark"?"light":"dark";
+      root.setAttribute("data-theme",next);
+      try{localStorage.setItem(key,next);}catch(e){}
+    });
+  })();
+
+  /* ---------- symbol data ---------- */
+  var SYMBOLS=[
+    {id:"inicio",name:"Evento de inicio",shape:"Círculo · línea fina",
+     desc:"Marca qué dispara el proceso: la llegada de una solicitud, la apertura de una convocatoria, una fecha.",
+     eg:"«Se publica la convocatoria de la subvención».",
+     art:'<circle cx="30" cy="30" r="20" fill="none" stroke="var(--c-start)" stroke-width="2"/>'},
+    {id:"intermedio",name:"Evento intermedio",shape:"Círculo · doble línea",
+     desc:"Algo que ocurre durante el proceso: una espera, la recepción de un mensaje, el vencimiento de un plazo.",
+     eg:"«Se espera la subsanación del postulante (10 días hábiles)».",
+     art:'<circle cx="30" cy="30" r="20" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="30" cy="30" r="15.5" fill="none" stroke="currentColor" stroke-width="1.8"/>'},
+    {id:"fin",name:"Evento de fin",shape:"Círculo · línea gruesa",
+     desc:"El resultado con el que termina ese camino. Un proceso puede tener varios finales distintos.",
+     eg:"«Subvención otorgada» / «Expediente no admitido».",
+     art:'<circle cx="30" cy="30" r="20" fill="none" stroke="var(--c-end)" stroke-width="4.5"/>'},
+    {id:"evmensaje",name:"Evento de mensaje",shape:"Círculo · con un sobre",
+     desc:"El ícono interior precisa el tipo (sobre = mensaje, reloj = tiempo). El borde sigue diciendo si es inicio, intermedio o fin.",
+     eg:"«Mesa de Partes se activa al recibir la propuesta».",
+     art:'<circle cx="30" cy="30" r="20" fill="none" stroke="currentColor" stroke-width="2"/><rect x="19" y="22" width="22" height="15" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M19 22L30 31L41 22" fill="none" stroke="currentColor" stroke-width="1.6"/>'},
+    {id:"tarea",name:"Tarea",shape:"Rectángulo redondeado",
+     desc:"Una unidad de trabajo que una persona o el sistema realiza. Se nombra con verbo + objeto.",
+     eg:"«Registrar el expediente», «Evaluar la propuesta».",
+     art:'<rect x="8" y="16" width="44" height="28" rx="6" fill="none" stroke="currentColor" stroke-width="2"/>'},
+    {id:"tareausuario",name:"Tarea de usuario",shape:"Rectángulo · figura de persona",
+     desc:"La ejecuta una persona con apoyo del sistema. Otros marcadores: engranaje = automática; mano = manual, sin sistema.",
+     eg:"«El evaluador registra su calificación en la plataforma».",
+     art:'<rect x="8" y="16" width="44" height="28" rx="6" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="17" cy="24" r="3" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M12 32c0-4 10-4 10 0" fill="none" stroke="currentColor" stroke-width="1.4"/>'},
+    {id:"subproceso",name:"Subproceso",shape:"Rectángulo · signo +",
+     desc:"Contiene más actividades, resumidas. El signo + indica que se puede «abrir» para ver el detalle.",
+     eg:"«Evaluación de admisibilidad», que por dentro tiene varias revisiones.",
+     art:'<rect x="8" y="14" width="44" height="32" rx="6" fill="none" stroke="currentColor" stroke-width="2"/><rect x="25" y="38" width="10" height="10" fill="var(--surface)" stroke="currentColor" stroke-width="1.5"/><path d="M30 40.5v5M27.5 43h5" stroke="currentColor" stroke-width="1.5"/>'},
+    {id:"gwx",name:"Compuerta exclusiva",shape:"Rombo · X",
+     desc:"Se toma UN solo camino, según se cumpla una condición. Cada salida lleva una etiqueta con su condición.",
+     eg:"«¿Expediente admisible? → Sí / No».",
+     art:'<path d="M30 6L54 30L30 54L6 30Z" fill="none" stroke="currentColor" stroke-width="2"/><path d="M22 22L38 38M38 22L22 38" stroke="var(--c-gate)" stroke-width="2.4"/>'},
+    {id:"gwand",name:"Compuerta paralela",shape:"Rombo · +",
+     desc:"Todos los caminos se ejecutan a la vez. Más adelante otra compuerta paralela espera a que terminen todos.",
+     eg:"«Revisar presupuesto» y «Revisar aspectos legales» al mismo tiempo.",
+     art:'<path d="M30 6L54 30L30 54L6 30Z" fill="none" stroke="currentColor" stroke-width="2"/><path d="M30 19v22M19 30h22" stroke="var(--c-gate)" stroke-width="2.4"/>'},
+    {id:"gwor",name:"Compuerta inclusiva",shape:"Rombo · O",
+     desc:"Se toman uno o varios caminos: todos los que cumplan su condición.",
+     eg:"Notificar «al postulante» y/o «a la entidad», según corresponda.",
+     art:'<path d="M30 6L54 30L30 54L6 30Z" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="30" cy="30" r="9" fill="none" stroke="var(--c-gate)" stroke-width="2.4"/>'},
+    {id:"seq",name:"Flujo de secuencia",shape:"Flecha · línea continua",
+     desc:"Marca el orden de las actividades dentro de un mismo participante.",
+     eg:"De «Registrar el expediente» a «Verificar los requisitos».",
+     art:'<line x1="8" y1="30" x2="46" y2="30" stroke="currentColor" stroke-width="2" marker-end="url(#seq)"/>'},
+    {id:"msg",name:"Flujo de mensaje",shape:"Flecha · línea punteada",
+     desc:"Comunicación entre dos participantes distintos: un envío, una notificación, una respuesta. Nunca conecta dos actividades del mismo pool.",
+     eg:"El postulante envía la propuesta a PROCIENCIA.",
+     art:'<line x1="9" y1="30" x2="45" y2="30" stroke="currentColor" stroke-width="1.7" stroke-dasharray="4 3" marker-start="url(#msgdot)" marker-end="url(#msg)"/>'},
+    {id:"pool",name:"Pool (participante)",shape:"Recuadro grande",
+     desc:"Una entidad u organización completa. Cada pool se lee por separado.",
+     eg:"«Postulante», «PROCIENCIA», «CONCYTEC».",
+     art:'<rect x="6" y="12" width="48" height="36" fill="none" stroke="currentColor" stroke-width="2"/><line x1="16" y1="12" x2="16" y2="48" stroke="currentColor" stroke-width="2"/>'},
+    {id:"lane",name:"Lane (carril)",shape:"Franja dentro del pool",
+     desc:"Un área o rol dentro del pool. Arriba o abajo no implica jerarquía: solo indica quién actúa.",
+     eg:"«Mesa de Partes», «Unidad de Evaluación».",
+     art:'<rect x="6" y="12" width="48" height="36" fill="none" stroke="currentColor" stroke-width="1.4"/><line x1="16" y1="12" x2="16" y2="48" stroke="currentColor" stroke-width="1.4"/><rect x="16" y="12" width="38" height="18" fill="var(--accent-soft)"/><line x1="16" y1="30" x2="54" y2="30" stroke="currentColor" stroke-width="1.4"/>'},
+    {id:"datos",name:"Objeto de datos",shape:"Hoja · esquina doblada",
+     desc:"Un documento que el proceso produce o consume.",
+     eg:"El expediente, el informe de evaluación, la resolución.",
+     art:'<path d="M16 8h20l10 10v34H16Z" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M36 8v10h10" fill="none" stroke="currentColor" stroke-width="1.8"/>'},
+    {id:"deposito",name:"Depósito de datos",shape:"Cilindro",
+     desc:"Un sistema o base donde se guarda o consulta información.",
+     eg:"RENACYT, el SIGA, un repositorio institucional.",
+     art:'<path d="M14 16c0-4 32-4 32 0v28c0 4-32 4-32 0Z" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M14 16c0 4 32 4 32 0" fill="none" stroke="currentColor" stroke-width="1.8"/>'},
+    {id:"anotacion",name:"Anotación",shape:"Corchete con texto",
+     desc:"Una aclaración escrita del analista. Da contexto; no altera el flujo.",
+     eg:"«Plazo legal: 30 días hábiles».",
+     art:'<path d="M18 12c-4 0-4 6-4 18s0 18 4 18" fill="none" stroke="currentColor" stroke-width="1.8"/><line x1="22" y1="22" x2="46" y2="22" stroke="currentColor" stroke-width="1.6"/><line x1="22" y1="30" x2="44" y2="30" stroke="currentColor" stroke-width="1.6"/><line x1="22" y1="38" x2="46" y2="38" stroke="currentColor" stroke-width="1.6"/>'}
+  ];
+
+  /* ---------- symbol explorer ---------- */
+  (function(){
+    var wrap=document.getElementById("explorer");
+    if(!wrap) return;
+    var palette=wrap.querySelector(".exp-palette");
+    var dArt=wrap.querySelector('[data-role="art"]');
+    var dShape=wrap.querySelector('[data-role="shape"]');
+    var dName=wrap.querySelector('[data-role="name"]');
+    var dDesc=wrap.querySelector('[data-role="desc"]');
+    var dEg=wrap.querySelector('[data-role="eg"]');
+    var buttons=[];
+
+    function select(i){
+      var s=SYMBOLS[i];
+      dArt.innerHTML='<svg viewBox="0 0 60 60" role="img" aria-label="'+s.name+'">'+s.art+'</svg>';
+      dShape.textContent=s.shape;
+      dName.textContent=s.name;
+      dDesc.textContent=s.desc;
+      dEg.innerHTML="<b>Ejemplo:</b> "+s.eg;
+      buttons.forEach(function(b,bi){ b.setAttribute("aria-pressed", bi===i?"true":"false"); });
+    }
+
+    SYMBOLS.forEach(function(s,i){
+      var b=document.createElement("button");
+      b.type="button";
+      b.className="exp-chip";
+      b.setAttribute("aria-pressed","false");
+      b.innerHTML='<svg viewBox="0 0 60 60" aria-hidden="true">'+s.art+'</svg><span>'+s.name+'</span>';
+      b.addEventListener("click",function(){ select(i); });
+      b.addEventListener("keydown",function(e){
+        var n=null;
+        if(e.key==="ArrowRight"||e.key==="ArrowDown") n=(i+1)%SYMBOLS.length;
+        else if(e.key==="ArrowLeft"||e.key==="ArrowUp") n=(i-1+SYMBOLS.length)%SYMBOLS.length;
+        if(n!==null){ e.preventDefault(); buttons[n].focus(); select(n); }
+      });
+      palette.appendChild(b);
+      buttons.push(b);
+    });
+    select(0);
+  })();
+
+  /* ---------- reference card ---------- */
+  (function(){
+    var box=document.getElementById("refcard");
+    if(!box) return;
+    var order=["inicio","intermedio","fin","tarea","subproceso","gwx","gwand","gwor","seq","msg","pool","lane","datos","deposito"];
+    order.forEach(function(id){
+      var s=SYMBOLS.filter(function(x){return x.id===id;})[0];
+      if(!s) return;
+      var d=document.createElement("div");
+      d.className="r";
+      d.innerHTML='<svg viewBox="0 0 60 60" role="img" aria-label="'+s.name+'">'+s.art+'</svg><span>'+s.name+' — '+s.shape.split(" · ")[0].toLowerCase()+'</span>';
+      box.appendChild(d);
+    });
+  })();
+
+  /* ---------- guided diagram players ---------- */
+  var CONFIG={
+    cafe:{
+      maxSteps:8,
+      build:function(choice){
+        var common=[
+          {node:"start",kind:"Evento de inicio",title:"Quiero un café",
+           body:"El círculo de línea fina abre el proceso. Siempre hay un disparador: aquí, las ganas de tomar café."},
+          {node:"hervir",enter:"start>hervir",kind:"Tarea",title:"Hervir agua",
+           body:"Un rectángulo redondeado es un trabajo concreto. Se nombra con verbo + objeto."},
+          {node:"gw1",enter:"hervir>gw1",kind:"Compuerta exclusiva",title:"¿Hay café molido?",
+           body:"El rombo con una X plantea una pregunta y se toma UNA sola de sus salidas. Elige la respuesta para continuar.",
+           choice:{options:[{label:"Sí, tengo café molido",path:"si"},{label:"No tengo, hay que comprar",path:"no"}]}}
+        ];
+        var rest=[
+          {node:"merge",enter:(choice==="no"?"comprar>merge":"gw1>merge"),kind:"Compuerta (unión)",title:"Los caminos se reúnen",
+           body:"La misma forma de rombo, ahora uniendo. Tengas que comprar café o no, desde aquí el proceso es el mismo."},
+          {node:"preparar",enter:"merge>preparar",kind:"Tarea",title:"Preparar café",
+           body:"Se prepara el café en la cafetera. Este paso es común a los dos caminos."},
+          {node:"servir",enter:"preparar>servir",kind:"Tarea",title:"Servir en la taza",
+           body:"Última actividad antes del final."},
+          {node:"end",enter:"servir>end",kind:"Evento de fin",title:"Café listo",
+           body:"El círculo de línea gruesa cierra el proceso. Resultado alcanzado."}
+        ];
+        if(choice==="si") return common.concat(rest);
+        if(choice==="no") return common.concat([
+          {node:"comprar",enter:"gw1>comprar",kind:"Tarea",title:"Comprar café molido",
+           body:"Camino «No». Hay que salir a comprar café molido antes de poder prepararlo."}
+        ], rest);
+        return common;
+      }
+    },
+    subv:{
+      maxSteps:11,
+      build:function(choice){
+        var common=[
+          {node:"pa_start",kind:"Evento de inicio",title:"Convocatoria publicada",
+           body:"Se abre la convocatoria de la subvención. Ese es el disparador del proceso."},
+          {node:"pa_present",enter:"start>present",kind:"Tarea · Postulante",title:"Presentar la propuesta",
+           body:"La entidad postulante prepara y envía su propuesta dentro del plazo."},
+          {node:"msg1",kind:"Flujo de mensaje",title:"La propuesta viaja a PROCIENCIA",
+           body:"Línea punteada: comunicación entre dos pools. El flujo de secuencia (línea continua) nunca cruza de un participante a otro."},
+          {node:"mp_start",kind:"Evento de mensaje",title:"Mesa de Partes se activa",
+           body:"El pool de PROCIENCIA no arranca solo: su primer círculo es un evento de mensaje que se dispara al recibir la propuesta."},
+          {node:"mp_reg",enter:"mpstart>reg",kind:"Tarea · Mesa de Partes",title:"Registrar y revisar el expediente",
+           body:"Se registra el ingreso y se revisan los requisitos formales."},
+          {node:"gw",enter:"reg>gw",kind:"Compuerta exclusiva",title:"¿Expediente admisible?",
+           body:"El rombo pregunta si el expediente cumple los requisitos formales. Se tomará una sola salida — elígela.",
+           choice:{options:[{label:"Sí, es admisible",path:"si"},{label:"No, tiene observaciones",path:"no"}]}}
+        ];
+        if(choice==="si") return common.concat([
+          {node:"evaluar",enter:"gw>evaluar",kind:"Tarea · Evaluación",title:"Evaluar la propuesta",
+           body:"Revisión de pares y de viabilidad técnica y presupuestal."},
+          {node:"aprobar",enter:"evaluar>aprobar",kind:"Tarea · Evaluación y selección",title:"Aprobar la lista de seleccionados",
+           body:"Se consolida el cuadro de méritos y se aprueba la relación final."},
+          {node:"msg2",kind:"Flujo de mensaje",title:"Se notifica el resultado",
+           body:"El resultado vuelve al postulante como mensaje, cruzando de nuevo entre pools."},
+          {node:"pa_result",kind:"Tarea · Postulante",title:"Conocer el resultado",
+           body:"El postulante recibe y revisa la notificación. Fíjate: entre presentar y este paso, su carril estuvo vacío."},
+          {node:"fin_ok",enter:"result>fin",kind:"Evento de fin",title:"Subvención otorgada",
+           body:"Círculo de línea gruesa. Uno de los dos desenlaces posibles del proceso."}
+        ]);
+        if(choice==="no") return common.concat([
+          {node:"obs",enter:"gw>obs",kind:"Tarea · Mesa de Partes",title:"Comunicar la observación",
+           body:"Se informa al postulante que el expediente no cumple los requisitos formales."},
+          {node:"fin_no",enter:"obs>finno",kind:"Evento de fin",title:"Expediente no admitido",
+           body:"Un final distinto: el expediente no continúa a evaluación. En este diagrama simplificado el proceso termina aquí."}
+        ]);
+        return common;
+      }
+    }
+  };
+
+  function Player(fig){
+    this.fig=fig;
+    this.cfg=CONFIG[fig.dataset.diagram];
+    this.svg=fig.querySelector("svg");
+    this.$fill=fig.querySelector('[data-role="fill"]');
+    this.$ptext=fig.querySelector('[data-role="ptext"]');
+    this.$kind=fig.querySelector('[data-role="kind"]');
+    this.$title=fig.querySelector('[data-role="title"]');
+    this.$body=fig.querySelector('[data-role="body"]');
+    this.$choices=fig.querySelector('[data-role="choices"]');
+    this.$prev=fig.querySelector('[data-role="prev"]');
+    this.$next=fig.querySelector('[data-role="next"]');
+    this.$reset=fig.querySelector('[data-role="reset"]');
+    var self=this;
+    this.$prev.addEventListener("click",function(){ self.go(-1); });
+    this.$next.addEventListener("click",function(){ self.go(1); });
+    this.$reset.addEventListener("click",function(){ self.reset(); });
+    fig.addEventListener("keydown",function(e){
+      if(e.target.tagName==="BUTTON") return;
+      if(e.key==="ArrowRight"){ e.preventDefault(); self.go(1); }
+      else if(e.key==="ArrowLeft"){ e.preventDefault(); self.go(-1); }
+    });
+    this.reset();
+  }
+  Player.prototype.reset=function(){
+    this.choice=null;
+    this.path=this.cfg.build(null);
+    this.i=0;
+    this.render();
+  };
+  Player.prototype.branchIndex=function(){
+    for(var k=0;k<this.path.length;k++){ if(this.path[k].choice) return k; }
+    return -1;
+  };
+  Player.prototype.maxIndex=function(){
+    return this.choice? this.path.length-1 : this.branchIndex();
+  };
+  Player.prototype.go=function(d){
+    var ni=this.i+d;
+    if(ni<0||ni>this.maxIndex()) return;
+    this.i=ni;
+    this.render();
+  };
+  Player.prototype.choose=function(which){
+    this.choice=which;
+    this.path=this.cfg.build(which);
+    this.i=this.branchIndex()+1;
+    this.render();
+  };
+  Player.prototype.render=function(){
+    var step=this.path[this.i], svg=this.svg, self=this;
+    svg.querySelectorAll(".gnode").forEach(function(g){ g.classList.remove("cur","done"); });
+    svg.querySelectorAll(".edge").forEach(function(e){ e.classList.remove("on"); });
+    for(var k=0;k<=this.i;k++){
+      var st=this.path[k];
+      if(st.node){
+        var g=svg.querySelector('[data-node="'+st.node+'"]');
+        if(g) g.classList.add(k===this.i?"cur":"done");
+      }
+      if(st.enter && k<=this.i){
+        var ed=svg.querySelector('[data-edge="'+st.enter+'"]');
+        if(ed) ed.classList.add("on");
+      }
+    }
+    this.$kind.textContent=step.kind;
+    this.$title.textContent=step.title;
+    this.$body.textContent=step.body;
+
+    var atBranch=!!step.choice && !this.choice;
+    this.$choices.innerHTML="";
+    if(atBranch){
+      step.choice.options.forEach(function(opt){
+        var b=document.createElement("button");
+        b.type="button";
+        b.textContent=opt.label;
+        b.addEventListener("click",function(){ self.choose(opt.path); });
+        self.$choices.appendChild(b);
+      });
+    }
+    this.$prev.disabled=this.i===0;
+    this.$next.disabled=atBranch || this.i>=this.maxIndex();
+
+    var total=this.choice? this.path.length : this.cfg.maxSteps;
+    var pct=Math.round(((this.i+1)/total)*100);
+    this.$fill.style.width=Math.min(100,pct)+"%";
+    if(atBranch) this.$ptext.textContent="Elige un camino ↓";
+    else if(this.choice && this.i===this.path.length-1) this.$ptext.textContent="Paso "+(this.i+1)+" · proceso terminado";
+    else this.$ptext.textContent="Paso "+(this.i+1);
+  };
+
+  document.querySelectorAll("figure.player").forEach(function(f){ new Player(f); });
+
+  /* ---------- quiz ---------- */
+  var QUESTIONS=[
+    {q:"¿Cuántos participantes intervienen en este proceso?",
+     opts:["Uno","Dos","Tres"],correct:0,
+     expl:"Uno. No hay pools ni carriles dibujados, así que todo ocurre dentro de un mismo participante (el equipo que administra RENACYT). Tampoco hay flechas punteadas."},
+    {q:"¿Qué evento abre el proceso?",
+     opts:["Un círculo de línea fina: «solicitud enviada»","Un círculo de línea gruesa","El rombo del centro"],correct:0,
+     expl:"El inicio es siempre un círculo de línea fina; aquí dice «solicitud enviada». El proceso arranca cuando un investigador envía su solicitud."},
+    {q:"¿Cuántos finales posibles tiene el proceso?",
+     opts:["Uno","Dos","Tres"],correct:1,
+     expl:"Dos, ambos con círculo de línea gruesa: «investigador registrado» y «solicitud rechazada». La compuerta decide cuál se alcanza."},
+    {q:"Si la respuesta en el rombo es «No», ¿se ejecuta la tarea «Registrar en RENACYT»?",
+     opts:["Sí, siempre se registra","No, se va directo al rechazo"],correct:1,
+     expl:"No. La compuerta es exclusiva (X): se toma un solo camino. La salida «No» va directo al fin «solicitud rechazada», sin pasar por el registro."},
+    {q:"Las flechas de este diagrama, ¿de qué tipo son?",
+     opts:["De secuencia (marcan el orden)","De mensaje (entre participantes)","Asociaciones a notas"],correct:0,
+     expl:"Todas son de secuencia: línea continua, punta rellena. No hay flujos de mensaje porque no hay un segundo participante con quien comunicarse."}
+  ];
+  (function(){
+    var box=document.getElementById("quiz");
+    if(!box) return;
+    var answered=0, score=0;
+    var scoreBar=document.createElement("div");
+    scoreBar.className="quiz-score";
+    scoreBar.innerHTML='<span data-role="s">Respuestas: 0 / '+QUESTIONS.length+'</span><button type="button">Reiniciar test</button>';
+    var scoreText=scoreBar.querySelector('[data-role="s"]');
+
+    var cards=[];
+    QUESTIONS.forEach(function(item,qi){
+      var card=document.createElement("div");
+      card.className="qcard";
+      var opts='<div class="qopts">';
+      item.opts.forEach(function(o,oi){ opts+='<button type="button" data-oi="'+oi+'" data-label="'+o+'">'+o+'</button>'; });
+      opts+='</div>';
+      card.innerHTML='<p class="qh"><b>'+(qi+1)+'</b><span>'+item.q+'</span></p>'+opts+'<p class="qexpl" hidden></p>';
+      var btns=card.querySelectorAll(".qopts button");
+      var expl=card.querySelector(".qexpl");
+      btns.forEach(function(b){
+        b.addEventListener("click",function(){
+          if(card.dataset.done) return;
+          card.dataset.done="1";
+          var oi=parseInt(b.dataset.oi,10);
+          var ok=oi===item.correct;
+          if(ok){ b.classList.add("correct"); b.innerHTML+=' <span class="mk">✓</span>'; score++; }
+          else{
+            b.classList.add("wrong"); b.innerHTML+=' <span class="mk">✗</span>';
+            btns[item.correct].classList.add("correct");
+          }
+          btns.forEach(function(x){ x.disabled=true; });
+          expl.textContent=item.expl;
+          expl.hidden=false;
+          answered++;
+          update();
+        });
+      });
+      cards.push(card);
+      box.appendChild(card);
+    });
+    box.appendChild(scoreBar);
+
+    function update(){
+      if(answered<QUESTIONS.length){
+        scoreText.textContent="Respuestas: "+answered+" / "+QUESTIONS.length;
+      }else{
+        var msg=score===QUESTIONS.length?" · ¡lo tienes claro!":(score>=3?" · vas bien":" · repasa el método de la sección 6");
+        scoreText.textContent="Aciertos: "+score+" / "+QUESTIONS.length+msg;
+      }
+    }
+    scoreBar.querySelector("button").addEventListener("click",function(){
+      answered=0; score=0;
+      cards.forEach(function(card){
+        delete card.dataset.done;
+        card.querySelectorAll(".qopts button").forEach(function(b){
+          b.disabled=false; b.classList.remove("correct","wrong");
+          b.textContent=b.dataset.label;
+        });
+        var ex=card.querySelector(".qexpl"); ex.hidden=true; ex.textContent="";
+      });
+      update();
+      box.scrollIntoView({behavior:"smooth",block:"start"});
+    });
+    update();
+  })();
+
+  /* ---------- TOC active state ---------- */
+  (function(){
+    var links=[].slice.call(document.querySelectorAll("nav.toc a"));
+    if(!links.length || !("IntersectionObserver" in window)) return;
+    var map={};
+    links.forEach(function(a){ var id=a.getAttribute("href").slice(1); var el=document.getElementById(id); if(el) map[id]=a; });
+    var obs=new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if(en.isIntersecting){
+          links.forEach(function(l){ l.classList.remove("active"); });
+          if(map[en.target.id]) map[en.target.id].classList.add("active");
+        }
+      });
+    },{rootMargin:"-20% 0px -70% 0px"});
+    Object.keys(map).forEach(function(id){ obs.observe(document.getElementById(id)); });
+  })();
+})();
+</script>
